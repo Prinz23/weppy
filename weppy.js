@@ -412,7 +412,12 @@ var WebP = (function(){
     auto: true,
     processImages: processImages,
     renderImage: renderImage,
-    renderWebP: renderWebP
+    renderWebP: renderWebP,
+    reprocessImages: function() {
+      if (supportsWebP == -1 && WebP.auto == true && checkWebM()){ 
+        processImages();
+      }
+    }
   }
   
 })();
