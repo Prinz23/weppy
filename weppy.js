@@ -415,7 +415,7 @@ var WebP = (function(){
   }
 
   function processImage(ele,error_callback){
-    if (first_img) {first_test();}
+    if (first_img) {first_img = false; first_test();}
     if (proc_web){
       try{
       if (webM_web){
