@@ -401,24 +401,21 @@ var WebP = (function(){
   
   var proc_web = false;
   var webM_web = false;
+  var first_img = true;
 
-  if(document && document.addEventListener){
-    document.addEventListener("DOMContentLoaded", function(){
-      supportsCallback = function(){
-        if(supportsWebP == -1 && WebP.auto == true){ //only do it once youre certain that the browser does not support it
-          //and make sure that auto is still true
-          proc_web = true;
-          if(checkWebM()){
-            //processImages();
-            webM_web = true;
-          }
-        }
+  function first_test(){
+    if(supportsWebP == -1 && WebP.auto == true){ //only do it once youre certain that the browser does not support it
+      //and make sure that auto is still true
+      proc_web = true;
+      if(checkWebM()){
+        //processImages();
+        webM_web = true;
       }
-      supportsCallback();
-    } ,false);
+    }
   }
-  
+
   function processImage(ele,error_callback){
+    if (first_img) {first_test();}
     if (proc_web){
       try{
       if (webM_web){
