@@ -21,6 +21,8 @@
 */
 
 var WebP = (function(){
+  var fake_img = 'http://www.motifake.com/image/demotivational-poster/0902/urine-urine-pee-cheap-demotivational-poster-1234913145.jpg';
+  
   //parse a RIFF encoded media file such as WebP
   function parseRIFF(string){
     var offset = 0;
@@ -345,6 +347,14 @@ var WebP = (function(){
       
       callback(video);
     }
+    xhr.onreadystatechange=function()
+    {
+    if (xhr.readyState < 2)
+      {
+
+      }
+    }
+    xhr.onerror = function() { }
     xhr.send(null);
   }
 
@@ -353,7 +363,7 @@ var WebP = (function(){
       var origin = location.protocol+'//'+location.host; //must check for same origin in order to be xhr'able
       for(var i = document.images, l = i.length; l--;){ //maybe we could get rid of the check and use CORS
         if(i[l].src.indexOf(origin) == 0 && /\.webp$/.test(i[l].src)){ //a nicer test would be good, but we dont have other options.
-          i[l].src = 'http://www.motifake.com/image/demotivational-poster/0902/urine-urine-pee-cheap-demotivational-poster-1234913145.jpg'
+          i[l].src = fake_img
         }
       }
       return false
@@ -388,16 +398,19 @@ var WebP = (function(){
       }
     }
   }
-
-
+  
+  var proc_web = false;
+  var webM_web = false;
 
   if(document && document.addEventListener){
     document.addEventListener("DOMContentLoaded", function(){
       supportsCallback = function(){
         if(supportsWebP == -1 && WebP.auto == true){ //only do it once youre certain that the browser does not support it
           //and make sure that auto is still true
+          proc_web = true;
           if(checkWebM()){
-            processImages();
+            //processImages();
+            webM_web = true;
           }
         }
       }
@@ -405,6 +418,24 @@ var WebP = (function(){
     } ,false);
   }
   
+  function processImage(ele,error_callback){
+    if (proc_web){
+      try{
+      if (webM_web){
+      renderImage(ele);} 
+      else {
+      ele.src = fake_img;
+      }
+      }
+      catch (e){
+      if (error_callback) {error_callback(ele);}
+      }
+    }
+    else {
+    if (error_callback) {error_callback(ele);}
+    }
+  }
+ 
   return {
     supportsWebP: function(){
       return supportsWebP;
@@ -412,7 +443,13 @@ var WebP = (function(){
     auto: true,
     processImages: processImages,
     renderImage: renderImage,
-    renderWebP: renderWebP
+    renderWebP: renderWebP,
+    processImage: processImage,
+    reprocessImages: function() {
+      if (proc_web){ 
+        processImages();
+      }
+    }
   }
   
 })();
